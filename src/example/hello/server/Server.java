@@ -48,7 +48,6 @@ public class Server {
     public static void main(String args[]) {
 
         try {
-        	
         	LocateRegistry.createRegistry(1099); //lance le registre
             Hello obj = new Hello();
             HelloItf stub = (HelloItf) UnicastRemoteObject.exportObject(obj, 0);
