@@ -25,9 +25,18 @@ public class Server {
 	private ArrayList<String> pseudoClients; //plus optimise en acces
 	
 	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		Server server = new Server();
+	}
+	
+	/**
 	 * 
 	 */
-	public Server() { 
+	private Server() { 
 		
 		history = new LinkedList<Message>();
 		pseudoClients = new ArrayList<String>();
@@ -52,14 +61,6 @@ public class Server {
 		
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		Server server = new Server();
-	}
 	/**
 	 * 
 	 * @param aMessage
