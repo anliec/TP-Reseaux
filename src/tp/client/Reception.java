@@ -28,7 +28,7 @@ public class Reception implements ReceptionItf {
 	/* (non-Javadoc)
 	 * @see tp.protocol.ReceptionItf#receive(tp.protocol.Message)
 	 */
-	@Override
+
 	public void receive(Message aMessage) throws RemoteException {
 		// TODO Auto-generated method stub
 		history.add(aMessage);
