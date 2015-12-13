@@ -5,6 +5,9 @@ package tp.client;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.LinkedList;
+
+import tp.protocol.Message;
 
 /**
  * @author pllefebvre
@@ -12,6 +15,8 @@ import java.rmi.registry.Registry;
  */
 public class Client {
 
+	private LinkedList<Message> history;
+	
 	/**
 	 * @param args
 	 */

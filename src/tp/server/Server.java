@@ -16,7 +16,7 @@ import tp.protocol.RequestItf;
 
 /**
  * @author Pierre-Louis
- * Classe du server
+ * Classe du serveur
  */
 
 public class Server {
@@ -58,7 +58,6 @@ public class Server {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-		
 	}
 	
 	/**
@@ -128,7 +127,5 @@ public class Server {
 			System.err.println("client " + pseudo + " not in server");
 			return 0;
 		}
-		
 	}
-
 }
