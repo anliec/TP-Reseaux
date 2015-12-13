@@ -16,13 +16,15 @@ import tp.protocol.ReceptionItf;
 
 public class Reception implements ReceptionItf {
 
-	private LinkedList<Message> history;
-	
+	private Client client;
 	/**
 	 * Constructeur par defaut de reception
 	 */
-	public Reception() {
+	public Reception(Client client) {
 		// TODO Auto-generated constructor stub
+		this.client = client;private LinkedList<Message> history;
+		
+		
 	}
 
 	/* (non-Javadoc)
