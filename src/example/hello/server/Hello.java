@@ -37,11 +37,11 @@
  */
 package example.hello.server;
 
-import example.hello.protocol.HelloItf;
+import example.hello.protocol.RecepetionItf;
 
 import java.rmi.RemoteException;
 
-public class Hello implements HelloItf {
+public class Hello implements RecepetionItf {
 
     public Hello() {}
 

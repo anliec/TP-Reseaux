@@ -37,7 +37,7 @@
  */
 package example.hello.server;
 
-import example.hello.protocol.HelloItf;
+import example.hello.protocol.RecepetionItf;
 
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -50,7 +50,7 @@ public class Server {
         try {
         	LocateRegistry.createRegistry(1099); //lance le registre
             Hello obj = new Hello();
-            HelloItf stub = (HelloItf) UnicastRemoteObject.exportObject(obj, 0);
+            RecepetionItf stub = (RecepetionItf) UnicastRemoteObject.exportObject(obj, 0);
 
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry();

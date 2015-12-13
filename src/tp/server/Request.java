@@ -17,7 +17,7 @@ public class Request implements RequestItf {
 	private Server server;
 	
 	/**
-	 * 
+	 * Classe de generation d'interface de requetes du serveur
 	 */
 	public Request(Server server) {
 		// TODO Auto-generated constructor stub

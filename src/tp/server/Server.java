@@ -1,5 +1,5 @@
 /**
- * 
+ * @filename Server.java
  */
 package tp.server;
 
@@ -29,26 +29,17 @@ public class Server {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new Server();
-	}
-	
-	/**
-	 * 
-	 */
-	private Server() { 
-		
-		history = new LinkedList<Message>();
-		pseudoClients = new ArrayList<String>();
+		Server server = new Server();
 		
 		try {
 			
         	LocateRegistry.createRegistry(1099); //lance le registre
-            Request obj = new Request(this);
-            RequestItf stub = (RequestItf) UnicastRemoteObject.exportObject(obj, 0);
+            Request request = new Request(server);
+            RequestItf requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
 
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry();
-            registry.bind("Request1", stub);
+            registry.bind("Request1", requestStub);
 
             System.err.println("Server ready");
 			
@@ -60,8 +51,18 @@ public class Server {
 	}
 	
 	/**
-	 * 
-	 * @param aMessage
+	 * Constructeur par defaut du serveur, initialise l'historique de message et la liste de clients
+	 */
+	private Server() { 
+		
+		history = new LinkedList<Message>();
+		pseudoClients = new ArrayList<String>();
+	
+	}
+	
+	/**
+	 * Methode d'ajout d'un message au serveur, qui le retransmet a tout les clients
+	 * @param aMessage le message
 	 */
 	public void addMessage(Message aMessage) {
 		
@@ -109,8 +110,7 @@ public class Server {
 	 * Methode de suppression d'un client du server
 	 * @param pseudo le pseudo du client
 	 * @return 1 si le client etait bien connecte au serveur et a donc bien ete retire, 0 sinon
-	 */
-	
+	 */	
 	public int removeClient(String pseudo) {
 		
 		ListIterator<String> li = pseudoClients.listIterator();

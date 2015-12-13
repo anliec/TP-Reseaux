@@ -11,7 +11,7 @@ import tp.protocol.ReceptionItf;
 
 /**
  * @author pllefebvre
- *
+ * Classe de generation d'interface de reception d'un client
  */
 
 public class Reception implements ReceptionItf {
