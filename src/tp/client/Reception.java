@@ -18,23 +18,20 @@ public class Reception implements ReceptionItf {
 
 	private Client client;
 	/**
-	 * Constructeur par defaut de reception
+	 * Constructeur par de la reception du client
+	 * @param client le client dont c'est la reception
 	 */
 	public Reception(Client client) {
 		// TODO Auto-generated constructor stub
-		this.client = client;private LinkedList<Message> history;
-		
-		
+		this.client = client;
 	}
 
 	/* (non-Javadoc)
 	 * @see tp.protocol.ReceptionItf#receive(tp.protocol.Message)
 	 */
-
 	public void receive(Message aMessage) throws RemoteException {
 		// TODO Auto-generated method stub
-		history.add(aMessage);
-		
+		client.addMessage(aMessage);
 	}
 
 }
