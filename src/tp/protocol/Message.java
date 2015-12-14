@@ -10,25 +10,34 @@ import java.util.Date;
  */
 public class Message {
 
-	private long idClient;
+	private String pseudoClient;
 	private Date date;
 	private String message;
 	
 	/**
 	 * Constructeur par defaut de Message
 	 */
-	public Message(long client, Date aDate, String aMessage) {
+	public Message(String client, Date aDate, String aMessage) {
 		// TODO Auto-generated constructor stub
-		idClient = client;
+		pseudoClient = client;
 		date = aDate;
 		message = aMessage;
 	}
 	
-	/**
-	 * @return the idClient
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
-	public long getIdClient() {
-		return idClient;
+	public String toString() {
+		
+		return pseudoClient + " a dit a " + date + " : \n" + message;
+	}
+	
+	/**
+	 * @return the pseudo of the client
+	 */
+	public String getIdClient() {
+		return pseudoClient;
 	}
 
 	/**

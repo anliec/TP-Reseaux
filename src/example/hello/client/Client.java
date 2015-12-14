@@ -37,7 +37,7 @@
  */
 package example.hello.client;
 
-import example.hello.protocol.HelloItf;
+import example.hello.protocol.RecepetionItf;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -50,7 +50,7 @@ public class Client {
         try {
             
         	Registry registry = LocateRegistry.getRegistry(host);
-            HelloItf stub = (HelloItf) registry.lookup("Hello1");
+            RecepetionItf stub = (RecepetionItf) registry.lookup("Hello1");
             String response = stub.sayHello();
             System.out.println("response: " + response);
         

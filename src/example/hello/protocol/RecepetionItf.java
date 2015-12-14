@@ -40,6 +40,6 @@ package example.hello.protocol;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface HelloItf extends Remote {
+public interface RecepetionItf extends Remote {
     String sayHello() throws RemoteException;
 }

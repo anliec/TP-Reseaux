@@ -11,28 +11,27 @@ import tp.protocol.ReceptionItf;
 
 /**
  * @author pllefebvre
- *
+ * Classe de generation d'interface de reception d'un client
  */
 
 public class Reception implements ReceptionItf {
 
-	private LinkedList<Message> history;
-	
+	private Client client;
 	/**
-	 * Constructeur par defaut de reception
+	 * Constructeur par de la reception du client
+	 * @param client le client dont c'est la reception
 	 */
-	public Reception() {
+	public Reception(Client client) {
 		// TODO Auto-generated constructor stub
+		this.client = client;
 	}
 
 	/* (non-Javadoc)
 	 * @see tp.protocol.ReceptionItf#receive(tp.protocol.Message)
 	 */
-	@Override
 	public void receive(Message aMessage) throws RemoteException {
 		// TODO Auto-generated method stub
-		history.add(aMessage);
-		
+		client.addMessage(aMessage);
 	}
 
 }
