@@ -13,7 +13,7 @@ import javax.swing.text.StyledDocument;
  * Created by nicolas on 14/12/15.
  */
 public class DiscussionWindow extends JFrame {
-	
+
 	private static final long serialVersionUID = 1982190238260060990L;
 	private JTextPane TP_messages;
     private StyledDocument doc_message;
