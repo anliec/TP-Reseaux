@@ -6,7 +6,7 @@ package tp.client;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collection;
+
 import java.util.Scanner;
 import java.util.Date;
 
@@ -58,12 +58,11 @@ public class Client {
     		pseudo = scanner.nextLine();
     		
     		requestStub.login(receptionStub);
-    		System.out.println("connecte, \n appyuer sur enter pour afficher les 10 derniers messages :");
-    		scanner.next();
+    		System.out.println("connecte, \n affichage des 10 derniers messages :");
     		{
-    			Collection<Message> last = requestStub.lastN(10);
+    			Message[] last = requestStub.lastN(10);
     			for(Message message : last) {
-    				System.out.println(message);
+    				if(message != null) System.out.println(message);
     			}
     		}
     		
@@ -89,11 +88,12 @@ public class Client {
     					System.out.println("nombre de messages a afficher :");
     					int n = scanner.nextInt();
     					{
-    		    			Collection<Message> last = requestStub.lastN(n);
+    		    			Message[] last = requestStub.lastN(n);
     		    			for(Message message : last) {
-    		    				System.out.println(message);
+    		    				if(message != null) System.out.println(message);
     		    			}
     		    		}
+    					break;
     					
     				case "/q" :
     					

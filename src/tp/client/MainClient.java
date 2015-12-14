@@ -3,6 +3,9 @@
  */
 package tp.client;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * @author pllefebvre
  *

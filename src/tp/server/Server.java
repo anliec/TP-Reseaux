@@ -134,9 +134,9 @@ public class Server {
 		}
 	}
 	
-	public Collection<Message> lastN(int n) {
+	public Message[] lastN(int n) {
 		
-		int last = history.size() - 1;
-		return  history.subList(Math.max(last - n, 0), last);
+		int last = Math.max(history.size() - 1, 0);
+		return  history.subList(Math.max(last - n, 0), last).toArray(new Message[n]);
 	}
 }
