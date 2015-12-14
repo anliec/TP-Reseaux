@@ -3,13 +3,17 @@
  */
 package tp.protocol;
 
+import java.io.Serializable;
 import java.util.Date;
+
 /**
  * @author pllefebvre
  *
  */
-public class Message {
 
+public class Message implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private String pseudoClient;
 	private Date date;
 	private String message;
@@ -37,6 +41,7 @@ public class Message {
 	 * @return the pseudo of the client
 	 */
 	public String getIdClient() {
+		
 		return pseudoClient;
 	}
 
@@ -44,6 +49,7 @@ public class Message {
 	 * @return the date
 	 */
 	public Date getDate() {
+		
 		return date;
 	}
 
@@ -51,6 +57,7 @@ public class Message {
 	 * @return the message
 	 */
 	public String getMessage() {
+		
 		return message;
 	}
 }

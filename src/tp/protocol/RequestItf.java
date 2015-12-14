@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 public interface RequestItf extends Remote {
 	
 	public void send(Message aMessage) throws RemoteException;
-	public int login(String pseudo) throws RemoteException;
-	public int logout(String pseudo) throws RemoteException;
+	public int login(ReceptionItf pseudo) throws RemoteException;
+	public int logout(ReceptionItf pseudo) throws RemoteException;
 
 }

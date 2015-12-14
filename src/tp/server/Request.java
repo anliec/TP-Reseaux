@@ -6,6 +6,7 @@ package tp.server;
 import java.rmi.RemoteException;
 
 import tp.protocol.Message;
+import tp.protocol.ReceptionItf;
 import tp.protocol.RequestItf;
 
 /**
@@ -33,9 +34,9 @@ public class Request implements RequestItf {
 	}
 
 	/* (non-Javadoc)
-	 * @see tp.protocol.RequestItf#login(java.lang.String)
+	 * @see tp.protocol.RequestItf#login(tp.protocol.ReceptionItf)
 	 */
-	public int login(String pseudo) throws RemoteException {
+	public int login(ReceptionItf pseudo) throws RemoteException {
 		// TODO Auto-generated method stub
 		return server.addClient(pseudo);
 	}
@@ -43,7 +44,7 @@ public class Request implements RequestItf {
 	/* (non-Javadoc)
 	 * @see tp.protocol.RequestItf#logout(long)
 	 */
-	public int logout(String pseudo) throws RemoteException {
+	public int logout(ReceptionItf pseudo) throws RemoteException {
 		// TODO Auto-generated method stub
 		return server.removeClient(pseudo);
 	}

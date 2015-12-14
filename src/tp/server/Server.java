@@ -22,7 +22,7 @@ import tp.protocol.RequestItf;
 public class Server {
 
 	private LinkedList<Message> history; //plus optimise en ajout/suppression
-	private ArrayList<String> pseudoClients; //plus optimise en acces
+	private ArrayList<ReceptionItf> receptionClients; //plus optimise en acces
 	
 	/**
 	 * @param args
@@ -41,7 +41,7 @@ public class Server {
             Registry registry = LocateRegistry.getRegistry();
             registry.bind("Request1", requestStub);
 
-            System.err.println("Server ready");
+            System.out.println("Server ready");
 			
         } catch (Exception e) {
         	
@@ -56,7 +56,7 @@ public class Server {
 	private Server() { 
 		
 		history = new LinkedList<Message>();
-		pseudoClients = new ArrayList<String>();
+		receptionClients = new ArrayList<ReceptionItf>();
 	
 	}
 	
@@ -67,20 +67,20 @@ public class Server {
 	public void addMessage(Message aMessage) {
 		
 		history.add(aMessage);
+		System.out.println(aMessage);
 		
-		for(int i = 0; i < pseudoClients.size(); i++) {
+		for(int i = 0; i < receptionClients.size(); i++) {
 		
 			try {
 	            
-	        	Registry registry = LocateRegistry.getRegistry();
-	            ReceptionItf stub = (ReceptionItf) registry.lookup(pseudoClients.get(i));
-	            stub.receive(aMessage);
-	            
+				receptionClients.get(i).receive(aMessage);
+				   
 	        } catch (Exception e) {
 	            
-	        	System.err.println("Server exception : Client : " + pseudoClients.get(i) + " not found ");
-	        	removeClient(pseudoClients.get(i));
-	            e.printStackTrace();
+	        	System.err.println("Server exception : Client : " + receptionClients.get(i) + " not found ");
+	        	removeClient(receptionClients.get(i));
+	        	System.err.println("Server exception: " + e.toString());
+	        	e.printStackTrace();
 	        }
 		}
 	}
@@ -89,41 +89,45 @@ public class Server {
 	 * @param pseudo
 	 * @return 1 si le client a ete correctement integre, 0 sinon, lorsque le pseudo est deja pris
 	 */
-	public int addClient(String pseudo) {
+	public int addClient(ReceptionItf pseudo) {
 		
-		ListIterator<String> li = pseudoClients.listIterator();
+		ListIterator<ReceptionItf> li = receptionClients.listIterator();
 		while ( li.hasNext() && !li.next().equals(pseudo) );
 		
 		if(!li.hasNext()) {
 			
-			pseudoClients.add(pseudo);
+			receptionClients.add(pseudo);
+			System.out.println("Client : " + receptionClients.get(receptionClients.size() - 1) + " added");
 			return 1;
 		
 		} else {
 			
-			System.err.println("pseudo " + pseudo + " already used");
+			System.err.println("Client : " + pseudo + " already exists");
 			return 0;
 		}
 	}
 	
 	/**
 	 * Methode de suppression d'un client du server
-	 * @param pseudo le pseudo du client
+	 * @param receptionItf le pseudo du client
 	 * @return 1 si le client etait bien connecte au serveur et a donc bien ete retire, 0 sinon
 	 */	
-	public int removeClient(String pseudo) {
+	public int removeClient(ReceptionItf receptionItf) {
 		
-		ListIterator<String> li = pseudoClients.listIterator();
-		while ( li.hasNext() && !li.next().equals(pseudo) );
+		ListIterator<ReceptionItf> li = receptionClients.listIterator();
+		while ( li.hasNext() && !li.next().equals(receptionItf) );
 		
-		if(li.hasNext()) {
+		try{
 			
-			pseudoClients.remove(pseudo);
+			li.remove();
+			System.out.println("Client : " + receptionItf + " removed");
 			return 1;
-		
-		} else {
 			
-			System.err.println("client " + pseudo + " not in server");
+		} catch (Exception e) {
+			
+			System.err.println("Client : " + receptionItf + " not in server");
+			System.err.println("Server exception: " + e.toString());
+			e.printStackTrace();
 			return 0;
 		}
 	}
