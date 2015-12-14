@@ -2,6 +2,7 @@ package socket;
 
 import java.io.*;
 import java.net.*;
+import java.util.LinkedList;
 
 /**
  * Created by nicolas on 14/12/15.
@@ -9,9 +10,11 @@ import java.net.*;
 public class ReceivingThread extends Thread {
 
     private Socket clientSocket;
+    private LinkedList<PrintStream> clientList;
 
-    ReceivingThread(Socket s) {
+    ReceivingThread(Socket s, LinkedList<PrintStream> refClientList) {
         this.clientSocket = s;
+        this.clientList = refClientList;
     }
 
     /**
@@ -24,9 +27,17 @@ public class ReceivingThread extends Thread {
             BufferedReader socIn = null;
             socIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
+            clientList.add(socOut);
             while (true) {
                 String line = socIn.readLine();
-                socOut.println(line);
+                System.out.println(line);
+                System.out.println(clientList.size());
+                /*for (int i = 0; i < clientList.size(); i++) {
+                    clientList.get(i).println(line);
+                }*/
+                for (PrintStream ps:clientList) {
+                    ps.println(line);
+                }
             }
         }
         catch (Exception e) {
