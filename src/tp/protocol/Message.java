@@ -15,6 +15,7 @@ public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String pseudoClient;
+	private String pseudoClientReceiver;
 	private Date date;
 	private String message;
 	
@@ -26,6 +27,15 @@ public class Message implements Serializable {
 		pseudoClient = client;
 		date = aDate;
 		message = aMessage;
+		pseudoClientReceiver = "all";
+	}
+
+	public Message(String client, Date aDate, String aMessage, String to) {
+		// TODO Auto-generated constructor stub
+		pseudoClient = client;
+		date = aDate;
+		message = aMessage;
+		pseudoClientReceiver = to;
 	}
 	
 	/*
@@ -59,5 +69,9 @@ public class Message implements Serializable {
 	public String getMessage() {
 		
 		return message;
+	}
+
+	public String getPseudoClientReceiver() {
+		return pseudoClientReceiver;
 	}
 }
