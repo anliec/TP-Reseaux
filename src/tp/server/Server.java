@@ -7,6 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -23,19 +24,22 @@ public class Server {
 
 	private LinkedList<Message> history; //plus optimise en ajout/suppression
 	private ArrayList<ReceptionItf> receptionClients; //plus optimise en acces
+	private RequestItf requestStub;
+	private Registry registry;
 	
 	/**
-	 * @param args
+	 * Constructeur par defaut du serveur, initialise l'historique de message et la liste de clients
+	 * et le connecte au registre
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Server server = new Server();
+	public Server() { 
 		
+		history = new LinkedList<Message>();
+		receptionClients = new ArrayList<ReceptionItf>();
 		try {
 			
         	LocateRegistry.createRegistry(1099); //lance le registre
-            Request request = new Request(server);
-            RequestItf requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
+            Request request = new Request(this);
+            requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
 
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry();
@@ -48,16 +52,14 @@ public class Server {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
+	
 	}
 	
 	/**
-	 * Constructeur par defaut du serveur, initialise l'historique de message et la liste de clients
+	 * methode d'execution du server
 	 */
-	private Server() { 
+	public void run(){
 		
-		history = new LinkedList<Message>();
-		receptionClients = new ArrayList<ReceptionItf>();
-	
 	}
 	
 	/**
@@ -130,5 +132,11 @@ public class Server {
 			e.printStackTrace();
 			return 0;
 		}
+	}
+	
+	public Collection<Message> lastN(int n) {
+		
+		int last = history.size() - 1;
+		return  history.subList(Math.max(last - n, 0), last);
 	}
 }

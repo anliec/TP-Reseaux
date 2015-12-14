@@ -6,8 +6,7 @@ package tp.client;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.Date;
 
@@ -21,40 +20,54 @@ import tp.protocol.RequestItf;
  */
 public class Client {
 
-	private ArrayList<Message> history;
 	private String pseudo;
+	private Registry registry;
+	private ReceptionItf receptionStub;
+	private RequestItf requestStub;
 
-	private Client() {
-
-		history = new ArrayList<Message>();
+	public Client(String[] args) {
+		
+		String host = (args.length < 1) ? null : args[0];
+		
+		try {
+			
+			registry = LocateRegistry.getRegistry(host);
+        	Reception reception = new Reception(this);
+        	receptionStub = (ReceptionItf) UnicastRemoteObject.exportObject(reception, 0);
+        
+        	//connection a l'interface serveur
+        	requestStub = (RequestItf) registry.lookup("Request1");
+        
+		} catch (Exception e) {
+	            
+	        System.err.println("Client exception: " + e.toString());
+	        e.printStackTrace();
+	    }
 	}
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Client client = new Client();
+	public void run() {
 		
-		String host = (args.length < 1) ? null : args[0];
 		try {
-            
-        	Registry registry = LocateRegistry.getRegistry(host);
-            Reception reception = new Reception(client);
-            ReceptionItf receptionStub = (ReceptionItf) UnicastRemoteObject.exportObject(reception, 0);
-            
-            //connect to the server itf
-            RequestItf requestStub = (RequestItf) registry.lookup("Request1");
-            
-            Scanner scanner = new Scanner(System.in);
+			Scanner scanner = new Scanner(System.in);
             
             //procedure d'inscription
     		System.out.println("choisissez un pseudo :");
-    		client.pseudo = scanner.nextLine();
+    		pseudo = scanner.nextLine();
     		
     		requestStub.login(receptionStub);
+    		System.out.println("connecte, \n appyuer sur enter pour afficher les 10 derniers messages :");
+    		scanner.next();
+    		{
+    			Collection<Message> last = requestStub.lastN(10);
+    			for(Message message : last) {
+    				System.out.println(message);
+    			}
+    		}
     		
-    		// systeme de commande d'envoi de message --  a terminer
+    		// systeme de commande d'envoi de message
     		String cmd = "";
     		boolean on = true;
     		while(on) {
@@ -66,9 +79,21 @@ public class Client {
     				
     				case "/m" :
     					
+    					System.out.println("Message :");
     					cmd = scanner.nextLine();
-    					requestStub.send(client.createMessage(cmd));
+    					requestStub.send(createMessage(cmd));
     					break ;
+    					
+    				case "/l" :
+    					
+    					System.out.println("nombre de messages a afficher :");
+    					int n = scanner.nextInt();
+    					{
+    		    			Collection<Message> last = requestStub.lastN(n);
+    		    			for(Message message : last) {
+    		    				System.out.println(message);
+    		    			}
+    		    		}
     					
     				case "/q" :
     					
@@ -103,7 +128,6 @@ public class Client {
 
 	public void addMessage(Message aMessage) {
 
-		history.add(aMessage);
 		System.out.println(aMessage);
 	}
 

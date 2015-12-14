@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class Message implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1543219565001L;
 	private String pseudoClient;
 	private String pseudoClientReceiver;
 	private Date date;

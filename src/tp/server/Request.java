@@ -4,6 +4,7 @@
 package tp.server;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 
 import tp.protocol.Message;
 import tp.protocol.ReceptionItf;
@@ -47,6 +48,15 @@ public class Request implements RequestItf {
 	public int logout(ReceptionItf pseudo) throws RemoteException {
 		// TODO Auto-generated method stub
 		return server.removeClient(pseudo);
+	}
+
+	/* (non-Javadoc)
+	 * @see tp.protocol.RequestItf#lastN(int)
+	 */
+	@Override
+	public Collection<Message> lastN(int n) throws RemoteException {
+		// TODO Auto-generated method stub
+		return server.lastN(n);
 	}
 
 }

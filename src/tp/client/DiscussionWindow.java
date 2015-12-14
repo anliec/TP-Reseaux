@@ -2,14 +2,20 @@ package tp.client;
 
 import tp.protocol.Message;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.text.StyledDocument;
 
 /**
  * Created by nicolas on 14/12/15.
  */
-public class DiscussionWindow {
-    private JTextPane TP_messages;
+public class DiscussionWindow extends JFrame {
+
+	private static final long serialVersionUID = 1982190238260060990L;
+	private JTextPane TP_messages;
     private StyledDocument doc_message;
     private JPanel panel1;
     private JButton Bt_Send;
