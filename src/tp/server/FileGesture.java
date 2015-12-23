@@ -30,20 +30,50 @@ public abstract class FileGesture {
 			FileReader fr = new FileReader(histoFile);
 			
 			int i = 0;
-			ListIterator<Message> iter = history.listIterator();
 			String client = "";
 			String date = "";
-			long timeDate = 0;
-			String Message = "";
+			String message = "";
 			int select = 0;
 			
 			while((i = fr.read()) != -1) {
 				
 				if((char)i != '|') {
 					
+					switch (select) {
+						
+						case 0 : 
+							
+							client += (char) i;
+							break;
+							
+						case 1 : 
+							
+							date += (char) i;
+							break;
+							
+						case 2 :
+							
+							message += (char) i;
+							break;
+							
+						case 3 :
+						
+							history.add(new Message(client, new Date(Long.parseLong(date)), message));
+							message = "";
+							date = "";
+							client = "";
+							select = 0;
+							break;
+							
+						default :
+							break;
+					} //fin switch select
 					
-				}
-			}
+				} else {
+					
+					select++;
+				} //fin si i != '|'
+			} //fin while fr.read();
 		
 		} catch (FileNotFoundException e) {
 		      
