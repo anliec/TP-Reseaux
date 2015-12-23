@@ -22,6 +22,8 @@ import tp.protocol.RequestItf;
 
 public class Server {
 
+	private static String histoFileName = "logs\\histo.log";
+	
 	private LinkedList<Message> history; //plus optimise en ajout/suppression
 	private ArrayList<ReceptionItf> receptionClients; //plus optimise en acces
 	private RequestItf requestStub;
@@ -33,7 +35,7 @@ public class Server {
 	 */
 	public Server() { 
 		
-		history = new LinkedList<Message>();
+		history = FileGesture.loadHistory(histoFileName);
 		receptionClients = new ArrayList<ReceptionItf>();
 		try {
 			
@@ -58,8 +60,19 @@ public class Server {
 	/**
 	 * methode d'execution du server
 	 */
-	public void run(){
+	public void run() {
 		
+		while(history.isEmpty()) { }
+		while(!history.isEmpty()) { }
+		this.close();
+	}
+	
+	/**
+	 * methode de fermeture du serveur
+	 */
+	public void close() {
+		
+		FileGesture.saveHistory(histoFileName, history);
 	}
 	
 	/**

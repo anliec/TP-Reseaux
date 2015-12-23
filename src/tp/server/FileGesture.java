@@ -3,6 +3,7 @@ package tp.server;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
@@ -24,10 +25,11 @@ public abstract class FileGesture {
 		
 		File histoFile = new File(file);
 		LinkedList<Message> history = new LinkedList<Message>();
+		FileReader fr;
 		
 		try {
 			
-			FileReader fr = new FileReader(histoFile);
+			fr = new FileReader(histoFile);
 			
 			int i = 0;
 			String client = "";
@@ -74,6 +76,8 @@ public abstract class FileGesture {
 					select++;
 				} //fin si i != '|'
 			} //fin while fr.read();
+			
+			fr.close();
 		
 		} catch (FileNotFoundException e) {
 		      
@@ -85,6 +89,45 @@ public abstract class FileGesture {
 		}
 		
 		return history;
+	}
+	
+	public static void saveHistory(String file, LinkedList<Message> history) {
+		
+		File histoFile = new File(file);
+		FileWriter fw;
+		
+		try {
+			
+			fw = new FileWriter(histoFile);
+			
+			ListIterator<Message> iter = history.listIterator();
+			Message next;
+			String str = "";
+			while(iter.hasNext()) {
+				
+				next = iter.next();
+				str += next.getIdClient();
+				str += "|";
+				str += String.valueOf(next.getDate().getTime());
+				str += "|";
+				str += next.getMessage();
+				
+			}//fin while iter.hasNext();
+			
+			fw.flush();
+			fw.write(str);
+			fw.close();
+			
+			
+		} catch (FileNotFoundException e) {
+		      
+			e.printStackTrace();
+		
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
 	}
 
 }
