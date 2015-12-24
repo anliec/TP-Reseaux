@@ -7,7 +7,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -22,7 +21,7 @@ import tp.protocol.RequestItf;
 
 public class Server {
 
-	private static String histoFileName = "logs\\histo.log";
+	private final static String histoFileName = "logs\\histo.log";
 	
 	private LinkedList<Message> history; //plus optimise en ajout/suppression
 	private ArrayList<ReceptionItf> receptionClients; //plus optimise en acces
@@ -44,7 +43,7 @@ public class Server {
             requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
 
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry();
+            registry = LocateRegistry.getRegistry();
             registry.bind("Request1", requestStub);
 
             System.out.println("Server ready");
@@ -62,13 +61,11 @@ public class Server {
 	 */
 	public void run() {
 		
-		while(history.isEmpty()) { }
-		while(!history.isEmpty()) { }
-		this.close();
 	}
 	
 	/**
 	 * methode de fermeture du serveur
+	 * enregistre l'historique des messages dans le fichier histo.log
 	 */
 	public void close() {
 		
@@ -97,6 +94,7 @@ public class Server {
 	        	System.err.println("Server exception: " + e.toString());
 	        	e.printStackTrace();
 	        }
+			
 		}
 	}
 	/**
@@ -112,7 +110,7 @@ public class Server {
 		if(!li.hasNext()) {
 			
 			receptionClients.add(pseudo);
-			System.out.println("Client : " + receptionClients.get(receptionClients.size() - 1) + " added");
+			System.out.println("Client : " + pseudo + " added");
 			return 1;
 		
 		} else {
@@ -136,6 +134,8 @@ public class Server {
 			
 			li.remove();
 			System.out.println("Client : " + receptionItf + " removed");
+			if(receptionClients.isEmpty()) 
+				close();
 			return 1;
 			
 		} catch (Exception e) {
@@ -143,13 +143,17 @@ public class Server {
 			System.err.println("Client : " + receptionItf + " not in server");
 			System.err.println("Server exception: " + e.toString());
 			e.printStackTrace();
+			if(receptionClients.isEmpty()) 
+				close();
 			return 0;
 		}
+		
+		
 	}
 	
 	public Message[] lastN(int n) {
 		
-		int last = Math.max(history.size() - 1, 0);
+		int last = Math.max(history.size(), 0);
 		return  history.subList(Math.max(last - n, 0), last).toArray(new Message[n]);
 	}
 }

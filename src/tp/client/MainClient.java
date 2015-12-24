@@ -1,10 +1,7 @@
 /**
- * @filname MainClient.java
+ * @filename MainClient.java
  */
 package tp.client;
-
-import java.text.DateFormat;
-import java.util.Date;
 
 /**
  * @author pllefebvre

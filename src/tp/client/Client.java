@@ -25,6 +25,11 @@ public class Client {
 	private ReceptionItf receptionStub;
 	private RequestItf requestStub;
 
+	/**
+	 * 
+	 * @param args
+	 */
+	
 	public Client(String[] args) {
 		
 		String host = (args.length < 1) ? null : args[0];
@@ -32,9 +37,6 @@ public class Client {
 		try {
 			
 			registry = LocateRegistry.getRegistry(host);
-        	Reception reception = new Reception(this);
-        	receptionStub = (ReceptionItf) UnicastRemoteObject.exportObject(reception, 0);
-        
         	//connection a l'interface serveur
         	requestStub = (RequestItf) registry.lookup("Request1");
         
@@ -46,8 +48,9 @@ public class Client {
 	}
 
 	/**
-	 * @param args
+	 * 
 	 */
+	
 	public void run() {
 		
 		try {
@@ -57,6 +60,8 @@ public class Client {
     		System.out.println("choisissez un pseudo :");
     		pseudo = scanner.nextLine();
     		
+    		Reception reception = new Reception(this);
+        	receptionStub = (ReceptionItf) UnicastRemoteObject.exportObject(reception, 0);
     		requestStub.login(receptionStub);
     		System.out.println("connecte, \n affichage des 10 derniers messages :");
     		{

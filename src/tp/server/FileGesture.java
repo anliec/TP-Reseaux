@@ -21,6 +21,8 @@ import tp.protocol.Message;
  */
 public abstract class FileGesture {
 	
+	private final static char SEP = '|';
+	
 	public static LinkedList<Message> loadHistory(String file) {
 		
 		File histoFile = new File(file);
@@ -39,7 +41,7 @@ public abstract class FileGesture {
 			
 			while((i = fr.read()) != -1) {
 				
-				if((char)i != '|') {
+				if((char)i != SEP) {
 					
 					switch (select) {
 						
@@ -57,23 +59,25 @@ public abstract class FileGesture {
 							
 							message += (char) i;
 							break;
-							
-						case 3 :
 						
-							history.add(new Message(client, new Date(Long.parseLong(date)), message));
-							message = "";
-							date = "";
-							client = "";
-							select = 0;
-							break;
-							
 						default :
 							break;
 					} //fin switch select
 					
 				} else {
 					
-					select++;
+					if(select < 2) {
+						
+						select++;
+					
+					}else{
+
+						history.add(new Message(client, new Date(Long.parseLong(date)), message));
+						message = "";
+						date = "";
+						client = "";
+						select = 0;
+					}
 				} //fin si i != '|'
 			} //fin while fr.read();
 			
@@ -107,10 +111,11 @@ public abstract class FileGesture {
 				
 				next = iter.next();
 				str += next.getIdClient();
-				str += "|";
+				str += SEP;
 				str += String.valueOf(next.getDate().getTime());
-				str += "|";
+				str += SEP;
 				str += next.getMessage();
+				str += SEP;
 				
 			}//fin while iter.hasNext();
 			

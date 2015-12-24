@@ -4,7 +4,6 @@
 package tp.client;
 
 import java.rmi.RemoteException;
-import java.util.LinkedList;
 
 import tp.protocol.Message;
 import tp.protocol.ReceptionItf;

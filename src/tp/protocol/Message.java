@@ -44,7 +44,7 @@ public class Message implements Serializable {
 	 */
 	public String toString() {
 		
-		return pseudoClient + " a dit a " + date + " : \n" + message;
+		return pseudoClient + " a dit le " + date + " : \n" + message;
 	}
 	
 	/**
