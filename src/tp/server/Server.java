@@ -3,12 +3,14 @@
  */
 package tp.server;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Scanner;
 
 import tp.protocol.Message;
 import tp.protocol.ReceptionItf;
@@ -36,23 +38,15 @@ public class Server {
 		
 		history = FileGesture.loadHistory(histoFileName);
 		receptionClients = new ArrayList<ReceptionItf>();
-		try {
-			
-        	LocateRegistry.createRegistry(1099); //lance le registre
-            Request request = new Request(this);
-            requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
-
-            // Bind the remote object's stub in the registry
-            registry = LocateRegistry.getRegistry();
-            registry.bind("Request1", requestStub);
-
-            System.out.println("Server ready");
-			
-        } catch (Exception e) {
-        	
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
-        }
+		
+		 try {
+			registry = LocateRegistry.getRegistry();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Server exception" + e);
+			e.printStackTrace();
+		}
+          
 	
 	}
 	
@@ -61,6 +55,32 @@ public class Server {
 	 */
 	public void run() {
 		
+		try {	
+        	LocateRegistry.createRegistry(1099); //lance le registre
+            Request request = new Request(this);
+            requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
+
+            // Bind the remote object's stub in the registry
+            registry.bind("Request1", requestStub);
+
+            System.out.println("Server ready");
+			
+        } catch (Exception e) {
+        	
+            System.err.println("Server exception: " + e);
+            e.printStackTrace();
+        }
+		
+		Scanner sc = new Scanner(System.in);
+		String cmd = "";
+		
+		while(cmd != "c"){
+			cmd = sc.nextLine();
+		}
+		sc.close();
+		close();
+		System.out.println("yo");
+		System.exit(0);
 	}
 	
 	/**
@@ -91,7 +111,7 @@ public class Server {
 	            
 	        	System.err.println("Server exception : Client : " + receptionClients.get(i) + " not found ");
 	        	removeClient(receptionClients.get(i));
-	        	System.err.println("Server exception: " + e.toString());
+	        	System.err.println("Server exception: " + e);
 	        	e.printStackTrace();
 	        }
 			
@@ -141,7 +161,7 @@ public class Server {
 		} catch (Exception e) {
 			
 			System.err.println("Client : " + receptionItf + " not in server");
-			System.err.println("Server exception: " + e.toString());
+			System.err.println("Server exception: " + e);
 			e.printStackTrace();
 			if(receptionClients.isEmpty()) 
 				close();
