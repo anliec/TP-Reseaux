@@ -3,8 +3,6 @@
  */
 package tp.server;
 
-import java.util.Scanner;
-
 /**
  * @author pllefebvre
  *
