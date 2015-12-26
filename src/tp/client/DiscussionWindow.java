@@ -15,10 +15,10 @@ import javax.swing.text.StyledDocument;
 public class DiscussionWindow extends JFrame {
 
 	private static final long serialVersionUID = 1982190238260060990L;
-	private JTextPane TP_messages;
-    private StyledDocument doc_message;
+	private JTextPane tpMessages;
+    private StyledDocument docMessage;
     private JPanel panel1;
-    private JButton Bt_Send;
+    private JButton sendBouton;
     private JTextField TF_messageSend;
 
     public DiscussionWindow()

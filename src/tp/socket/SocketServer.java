@@ -1,6 +1,6 @@
-package socket;
+package tp.socket;
 
-import socket.ReceivingThread;
+import tp.socket.ReceivingThread;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

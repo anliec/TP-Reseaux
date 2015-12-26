@@ -1,4 +1,4 @@
-package socket;
+package tp.socket;
 
 import tp.protocol.Message;
 
@@ -48,10 +48,12 @@ public class SocketClient {
             stdIn = new BufferedReader(new InputStreamReader(System.in));
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + serverIP);
+            e.printStackTrace();
             System.exit(1);
         } catch (IOException e) {
             System.err.println("Couldn't get I/O for "
                     + "the connection to:"+ serverIP);
+            e.printStackTrace();
             System.exit(1);
         }
         System.out.println("Connected to server: "+serverIP+" on port: "+serverPort);

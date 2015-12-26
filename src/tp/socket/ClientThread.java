@@ -1,4 +1,4 @@
-package socket;
+package tp.socket;
 
 import tp.protocol.Message;
 

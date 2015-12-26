@@ -1,4 +1,4 @@
-package socket;
+package tp.socket;
 
 import java.io.*;
 import java.net.*;
@@ -42,6 +42,7 @@ public class ReceivingThread extends Thread {
         }
         catch (Exception e) {
             System.err.println("Error in ReceivingThread: " + e);
+            e.printStackTrace();
         }
     }
 }

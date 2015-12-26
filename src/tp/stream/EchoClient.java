@@ -4,7 +4,7 @@
  * Date: 10/01/04
  * Authors:
  */
-package stream;
+package tp.stream;
 
 import java.io.*;
 import java.net.*;
