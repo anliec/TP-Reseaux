@@ -16,6 +16,7 @@ import java.util.Date;
 public class Message implements Serializable {
 	
 	private static final long serialVersionUID = 10L;
+
 	private String pseudoClient;
 	private String pseudoClientReceiver;
 	private Date date;
@@ -60,6 +61,33 @@ public class Message implements Serializable {
 		message = aMessage;
 		pseudoClientReceiver = to;
 	}
+
+	public Message(String socketClientStyleMessage){
+		int firstWordEnd = socketClientStyleMessage.indexOf(" ");
+		String request = socketClientStyleMessage.substring(0,firstWordEnd-1);
+		switch (request)
+		{
+			case "MESSAGE":
+				int endOfUser = socketClientStyleMessage.indexOf(" TO ");
+				int endOfToUser = socketClientStyleMessage.indexOf(" CONTENT ");
+				pseudoClient = socketClientStyleMessage.substring(firstWordEnd+6,endOfUser);
+				pseudoClientReceiver = socketClientStyleMessage.substring(endOfUser+4,endOfToUser);
+				message = socketClientStyleMessage.substring(endOfToUser+9);
+				break;
+			case "SIGIN":
+				pseudoClient = "server";
+				pseudoClientReceiver = "all";
+				message = socketClientStyleMessage.substring(6)+" signed in...";
+				//TODO implement sigin message to UI
+				break;
+			case "SIGOUT":
+				pseudoClient = "server";
+				pseudoClientReceiver = "all";
+				message = socketClientStyleMessage.substring(7)+" signed out...";
+				//TODO implement sigout message to UI
+				break;
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -69,6 +97,20 @@ public class Message implements Serializable {
 		
 		return pseudoClient + " > " + pseudoClientReceiver + " on : " + date +
 		        " : \n" + message;
+	}
+
+	/**
+	 * @return the text message to a client according to the socket protocol.
+	 */
+	public String toSocketClient() {
+		return "MESSAGE FROM "+pseudoClient+" TO "+pseudoClientReceiver+" CONTENT "+message;
+	}
+
+	/**
+	 * @return the text message to a server according to the socket protocol.
+	 */
+	public String toSocketServer(){
+		return "SENDTO "+pseudoClientReceiver+" CONTENT "+message;
 	}
 	
 	/**

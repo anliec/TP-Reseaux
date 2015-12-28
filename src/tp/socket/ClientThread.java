@@ -11,9 +11,9 @@ import java.util.LinkedList;
  */
 public class ClientThread extends Thread {
 
-    public LinkedList<Message> history;
-    public BufferedReader socIn;
-    boolean loop;
+    private LinkedList<Message> history;
+    private BufferedReader socIn;
+    private boolean loop;
 
     public ClientThread(LinkedList<Message> messagesHistory, BufferedReader stdInput)
     {
@@ -34,26 +34,8 @@ public class ClientThread extends Thread {
                 }
                 else
                 {
-                    int firstWordEnd = line.indexOf(" ");
-                    String request = line.substring(0,firstWordEnd-1);
-                    switch (request)
-                    {
-                        case "MESSAGE":
-                            int endOfUser = line.indexOf(" TO ");
-                            int endOfToUser = line.indexOf(" CONTENT ");
-                            String user = line.substring(firstWordEnd+6,endOfUser);
-                            String toUser = line.substring(endOfUser+4,endOfToUser);
-                            String messageText = line.substring(endOfToUser+9);
-                            Message message = new Message(user,new Date() ,messageText,toUser );
-                            history.add(message);
-                            break;
-                        case "SIGIN":
-                            //TODO implement sigin message to UI
-                            break;
-                        case "SIGOUT":
-                            //TODO implement sigout message to UI
-                            break;
-                    }
+                    Message message = new Message(line);
+                    history.add(message);
                 }
             }
             catch (Exception e)
