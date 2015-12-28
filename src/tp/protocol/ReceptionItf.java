@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 /**
  * @author pllefebvre
- *
+ * 
  */
 public interface ReceptionItf extends Remote {
 	

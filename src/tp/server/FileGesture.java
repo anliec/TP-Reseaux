@@ -1,3 +1,7 @@
+/**
+ * @filename FileGesture.java
+ */
+
 package tp.server;
 
 import java.io.File;
@@ -12,16 +16,24 @@ import java.util.ListIterator;
 import tp.protocol.Message;
 
 /**
- * @filename FileGesture.java
+ * @author pllefebvre Abstract
+ *         Class which contains methods to load and save messages history from/into a file
  */
 
-/**
- * @author pllefebvre
- *
- */
 public abstract class FileGesture {
 	
 	private final static char SEP = '|';
+	
+	/**
+	 * method which loads a messages list in a LinkedList of Message, from a
+	 * file in which a messages list was saved by the method saveHistory(String
+	 * file, LinkedList<Message> history)
+	 * 
+	 * @param file
+	 *            a String which contains the name of the file
+	 * @return a LinkedList<Message> which contains all the messages originally
+	 *         saved in the file
+	 */
 	
 	public static LinkedList<Message> loadHistory(String file) {
 		
@@ -39,22 +51,22 @@ public abstract class FileGesture {
 			String message = "";
 			int select = 0;
 			
-			while((i = fr.read()) != -1) {
+			while ((i = fr.read()) != -1) {
 				
-				if((char)i != SEP) {
+				if ((char) i != SEP) {
 					
 					switch (select) {
-						
-						case 0 : 
+					
+						case 0 :
 							
 							client += (char) i;
 							break;
-							
-						case 1 : 
+						
+						case 1 :
 							
 							date += (char) i;
 							break;
-							
+						
 						case 2 :
 							
 							message += (char) i;
@@ -62,31 +74,32 @@ public abstract class FileGesture {
 						
 						default :
 							break;
-					} //fin switch select
+					} // fin switch select
 					
 				} else {
 					
-					if(select < 2) {
+					if (select < 2) {
 						
 						select++;
-					
-					}else{
-
-						history.add(new Message(client, new Date(Long.parseLong(date)), message));
+						
+					} else {
+						
+						history.add(new Message(client, new Date(Long
+						        .parseLong(date)), message));
 						message = "";
 						date = "";
 						client = "";
 						select = 0;
 					}
-				} //fin si i != '|'
-			} //fin while fr.read();
+				} // fin si i != '|'
+			} // fin while fr.read();
 			
 			fr.close();
-		
+			
 		} catch (FileNotFoundException e) {
-		      
+			
 			e.printStackTrace();
-		
+			
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -94,6 +107,16 @@ public abstract class FileGesture {
 		
 		return history;
 	}
+	
+	/**
+	 * Method which save a messages list (LinkedList<Messages>) in a file whose
+	 * name is given in parameters
+	 * 
+	 * @param file
+	 *            the name of the file
+	 * @param history
+	 *            the LinkedList of Messages
+	 */
 	
 	public static void saveHistory(String file, LinkedList<Message> history) {
 		
@@ -107,7 +130,7 @@ public abstract class FileGesture {
 			ListIterator<Message> iter = history.listIterator();
 			Message next;
 			String str = "";
-			while(iter.hasNext()) {
+			while (iter.hasNext()) {
 				
 				next = iter.next();
 				str += next.getIdClient();
@@ -117,22 +140,19 @@ public abstract class FileGesture {
 				str += next.getMessage();
 				str += SEP;
 				
-			}//fin while iter.hasNext();
+			}// fin while iter.hasNext();
 			
 			fw.flush();
 			fw.write(str);
 			fw.close();
 			
-			
 		} catch (FileNotFoundException e) {
-		      
+			
 			e.printStackTrace();
-		
+			
 		} catch (IOException e) {
 			
 			e.printStackTrace();
 		}
-		
 	}
-
 }

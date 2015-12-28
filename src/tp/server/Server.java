@@ -18,63 +18,61 @@ import tp.protocol.RequestItf;
 
 /**
  * @author Pierre-Louis
- * Classe du serveur
+ *         Class to instanciante the server
  */
 
 public class Server {
-
-	private final static String histoFileName = "logs\\histo.log";
 	
-	private LinkedList<Message> history; //plus optimise en ajout/suppression
-	private ArrayList<ReceptionItf> receptionClients; //plus optimise en acces
+	private final static String HISTO_FILE_NAME = "logs\\histo.log";
+	
+	private LinkedList<Message> history; // plus optimise en ajout/suppression
+	private ArrayList<ReceptionItf> receptionClients; // plus optimise en acces
 	private RequestItf requestStub;
 	private Registry registry;
 	
 	/**
-	 * Constructeur par defaut du serveur, initialise l'historique de message et la liste de clients
-	 * et le connecte au registre
+	 * Default Server Constructor.
+	 * Initialize the messages' history and create a reference to a register
 	 */
-	public Server() { 
+	public Server() {
 		
-		history = FileGesture.loadHistory(histoFileName);
+		history = FileGesture.loadHistory(HISTO_FILE_NAME);
 		receptionClients = new ArrayList<ReceptionItf>();
 		
-		 try {
-			registry = LocateRegistry.getRegistry();
+		try {
+			registry = LocateRegistry.createRegistry(1099); // lance le registre
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			System.err.println("Server exception" + e);
 			e.printStackTrace();
 		}
-          
-	
+		
 	}
 	
 	/**
-	 * methode d'execution du server
+	 * Method which connects to the registry and run the server
 	 */
 	public void run() {
 		
-		try {	
-        	LocateRegistry.createRegistry(1099); //lance le registre
-            Request request = new Request(this);
-            requestStub = (RequestItf) UnicastRemoteObject.exportObject(request, 0);
-
-            // Bind the remote object's stub in the registry
-            registry.bind("Request1", requestStub);
-
-            System.out.println("Server ready");
+		try {
+			Request request = new Request(this);
+			requestStub = (RequestItf) UnicastRemoteObject.exportObject(
+			        request, 0);
 			
-        } catch (Exception e) {
-        	
-            System.err.println("Server exception: " + e);
-            e.printStackTrace();
-        }
+			// Bind the remote object's stub in the registry
+			registry.bind("Request1", requestStub);
+			
+			System.out.println("Server ready");
+			
+		} catch (Exception e) {
+			
+			System.err.println("Server exception: " + e);
+			e.printStackTrace();
+		}
 		
 		Scanner sc = new Scanner(System.in);
 		String cmd = "";
 		
-		while(cmd != "c"){
+		while (cmd != "c") {
 			cmd = sc.nextLine();
 		}
 		sc.close();
@@ -84,55 +82,63 @@ public class Server {
 	}
 	
 	/**
-	 * methode de fermeture du serveur
-	 * enregistre l'historique des messages dans le fichier histo.log
+	 * Method which closes the server saves the conversation history (the
+	 * messages' list sent to the server) in the file histo.log
 	 */
 	public void close() {
 		
-		FileGesture.saveHistory(histoFileName, history);
+		FileGesture.saveHistory(HISTO_FILE_NAME, history);
 	}
 	
 	/**
-	 * Methode d'ajout d'un message au serveur, qui le retransmet a tout les clients
-	 * @param aMessage le message
+	 * Method which adds a message to the server, which resends the message to
+	 * all the clients
+	 * 
+	 * @param aMessage
+	 *            the message
 	 */
 	public void addMessage(Message aMessage) {
 		
 		history.add(aMessage);
 		System.out.println(aMessage);
-		
-		for(int i = 0; i < receptionClients.size(); i++) {
-		
+		for (int i = 0; i < receptionClients.size(); i++) {
+			
 			try {
-	            
+				
 				receptionClients.get(i).receive(aMessage);
-				   
-	        } catch (Exception e) {
-	            
-	        	System.err.println("Server exception : Client : " + receptionClients.get(i) + " not found ");
-	        	removeClient(receptionClients.get(i));
-	        	System.err.println("Server exception: " + e);
-	        	e.printStackTrace();
-	        }
+				
+			} catch (Exception e) {
+				
+				System.err.println("Server exception : Client : "
+				        + receptionClients.get(i) + " not found ");
+				removeClient(receptionClients.get(i));
+				System.err.println("Server exception: " + e);
+				e.printStackTrace();
+			}
 			
 		}
 	}
+	
 	/**
-	 * Methode d'ajout d'un client au serveur
+	 * Method which adds a client to the server
+	 * 
 	 * @param pseudo
-	 * @return 1 si le client a ete correctement integre, 0 sinon, lorsque le pseudo est deja pris
+	 *            the interface (instance of ReceptionItf) of the client
+	 * @return 1 if the client has been correctly added, else 0, such as when
+	 *         the interface already exists
 	 */
 	public int addClient(ReceptionItf pseudo) {
 		
 		ListIterator<ReceptionItf> li = receptionClients.listIterator();
-		while ( li.hasNext() && !li.next().equals(pseudo) );
+		while (li.hasNext() && !li.next().equals(pseudo))
+			;
 		
-		if(!li.hasNext()) {
+		if (!li.hasNext()) {
 			
 			receptionClients.add(pseudo);
 			System.out.println("Client : " + pseudo + " added");
 			return 1;
-		
+			
 		} else {
 			
 			System.err.println("Client : " + pseudo + " already exists");
@@ -141,39 +147,52 @@ public class Server {
 	}
 	
 	/**
-	 * Methode de suppression d'un client du server
-	 * @param receptionItf le pseudo du client
-	 * @return 1 si le client etait bien connecte au serveur et a donc bien ete retire, 0 sinon
-	 */	
+	 * Method which removes client from the server. This method removes the
+	 * client interface access from the server and return a state code
+	 * 
+	 * @param receptionItf
+	 *            the client interface
+	 * @return 1 if the client was well connected to the server and has been
+	 *         well disconnected, else 0.
+	 */
 	public int removeClient(ReceptionItf receptionItf) {
 		
 		ListIterator<ReceptionItf> li = receptionClients.listIterator();
-		while ( li.hasNext() && !li.next().equals(receptionItf) );
+		while (li.hasNext() && !li.next().equals(receptionItf))
+			;
 		
-		try{
+		int code = 0;
+		try {
 			
 			li.remove();
 			System.out.println("Client : " + receptionItf + " removed");
-			if(receptionClients.isEmpty()) 
-				close();
-			return 1;
+			code = 1;
 			
 		} catch (Exception e) {
 			
 			System.err.println("Client : " + receptionItf + " not in server");
 			System.err.println("Server exception: " + e);
 			e.printStackTrace();
-			if(receptionClients.isEmpty()) 
-				close();
-			return 0;
+			
 		}
 		
-		
+		if (receptionClients.isEmpty())
+		    close();
+		return code;
 	}
+	
+	/**
+	 * Method which returns the last n messages of the conversation carried by
+	 * the server
+	 * 
+	 * @param n
+	 * @return the table of the n last messages
+	 */
 	
 	public Message[] lastN(int n) {
 		
 		int last = Math.max(history.size(), 0);
-		return  history.subList(Math.max(last - n, 0), last).toArray(new Message[n]);
+		return history.subList(Math.max(last - n, 0), last).toArray(
+		        new Message[n]);
 	}
 }
