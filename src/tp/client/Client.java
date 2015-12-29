@@ -10,7 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 import java.util.Date;
 
-import tp.frame.DiscussionWindow;
+import tp.frame.client.DiscussionWindow;
 import tp.protocol.Message;
 import tp.protocol.ReceptionItf;
 import tp.protocol.RequestItf;
@@ -145,7 +145,7 @@ public class Client {
 	}
 
 	/**
-	 * methode de création d'un message a pertir d'une chaine de caracteres
+	 * methode de crï¿½ation d'un message a pertir d'une chaine de caracteres
 	 * 
 	 * @param text
 	 *            la chaine de caracteres
