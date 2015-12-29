@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * Created by nicolas on 14/12/15.
+ * Server thread, design to handle the message send by one client
  */
 public class ReceivingThread extends Thread {
 
@@ -16,6 +17,8 @@ public class ReceivingThread extends Thread {
     private static final int CONNECTION_MESSAGE = 1;
     private static final int DISCONNECTION_MESSAGE = 2;
     private static final int TEXT_MESSAGE = 3;
+
+    private static final int HISTORY_SIZE_SEND=10;
 
     private LinkedList<Message> history;
     private Socket clientSocket;
@@ -105,6 +108,10 @@ public class ReceivingThread extends Thread {
         return instructionType;
     }
 
+    /**
+     * Handle the SEND [...] TO [...] instruction
+     * @param line line got from the client
+     */
     public void sendToHandler(String line){
         String pseudo, text;
         int pseudoBeginning, pseudoEnd, textBeginning;
@@ -116,7 +123,14 @@ public class ReceivingThread extends Thread {
         sendMessageTo(new Message(currantClientPseudo,new Date(),text,pseudo));
     }
 
+    /**
+     * send message to the right client (acording to the info on client)
+     * @param message a message to send
+     */
     public void sendMessageTo(Message message){
+        //add message to history:
+        history.add(message);
+        //send the message to the right people:
         if(message.getPseudoClientReceiver().equals("all"))
         {
             for (ClientDescriptor cd:clientList) {
@@ -132,6 +146,10 @@ public class ReceivingThread extends Thread {
         }
     }
 
+    /**
+     * handle a connection request.
+     * @param line line got from the client
+     */
     public void connectionHandler(String line){
         currantClientPseudo = line.substring(8);
 
@@ -141,10 +159,20 @@ public class ReceivingThread extends Thread {
         for (ClientDescriptor cd:clientList) {
             cd.getStream().println("SIGNIN "+currantClientPseudo);
         }
-        //send the last 10 message to the client:
         try{
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
-            for (int i=history.size()-1 ; i>history.size()-11 && i>0 ; i--){
+            //send the list of (other) client currently connected:
+            for (ClientDescriptor cd:clientList) {
+                if(!cd.getPseudo().equals(currantClientPseudo)){
+                    socOut.println("SIGNIN "+cd.getPseudo());
+                }
+            }
+            //send the last 10 message to the client:
+            int i=history.size()-HISTORY_SIZE_SEND;
+            if(i<0){
+                i=0;
+            }
+            for ( ; i<history.size() ; i++){
                 socOut.println(history.get(i).toSocketClient());
             }
         }catch (Exception e){
@@ -152,11 +180,15 @@ public class ReceivingThread extends Thread {
         }
     }
 
+    /**
+     * handle disconnection request.
+     */
     public void disconnectionHandler() {
         for (int i = 0; i < clientList.size(); i++) {
             if(clientList.get(i).getPseudo().equals(currantClientPseudo)) {
                 clientList.remove(i);
                 i--;
+                //if different client have the same pseudo, remove them all
             }
         }
         //send disconnection message to every one
@@ -165,3 +197,5 @@ public class ReceivingThread extends Thread {
         }
     }
 }
+
+

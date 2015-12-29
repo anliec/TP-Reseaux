@@ -1,4 +1,4 @@
-package tp.frame;
+package tp.frame.client;
 
 import java.awt.Dimension;
 import java.text.NumberFormat;
@@ -165,7 +165,7 @@ public class DiscussionWindow extends JFrame {
 	
 	/**
 	 * methode d'affichage dans la zone d'affichage des n derniers messages de la conversation, 
-	 * n etant le nombre indiqué dans la zone n =
+	 * n etant le nombre indiquï¿½ dans la zone n =
 	 */
 
 	public void dispLastN() {
