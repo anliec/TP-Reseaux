@@ -148,4 +148,12 @@ public class SocketClient {
 
         client.close();
     }
+
+    public LinkedList<Message> getHistory(){
+        return history;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
 }

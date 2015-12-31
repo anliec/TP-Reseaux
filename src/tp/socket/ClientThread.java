@@ -28,12 +28,10 @@ public class ClientThread extends Thread {
             try{
                 line= socIn.readLine();
                 System.out.println("received: "+line);
-                if(line.equals("."))
-                {
+                if(line.equals(".")) {
                     loop = false;
                 }
-                else
-                {
+                else {
                     Message message = new Message(line);
                     history.add(message);
                 }

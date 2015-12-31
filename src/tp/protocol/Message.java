@@ -34,7 +34,6 @@ public class Message implements Serializable {
 	 */
 	
 	public Message(String client, Date aDate, String aMessage) {
-		
 		pseudoClient = client;
 		date = aDate;
 		message = aMessage;
@@ -64,7 +63,7 @@ public class Message implements Serializable {
 
 	public Message(String socketClientStyleMessage){
 		int firstWordEnd = socketClientStyleMessage.indexOf(" ");
-		String request = socketClientStyleMessage.substring(0,firstWordEnd-1);
+		String request = socketClientStyleMessage.substring(0,firstWordEnd);
 		switch (request)
 		{
 			case "MESSAGE":
@@ -74,17 +73,15 @@ public class Message implements Serializable {
 				pseudoClientReceiver = socketClientStyleMessage.substring(endOfUser+4,endOfToUser);
 				message = socketClientStyleMessage.substring(endOfToUser+9);
 				break;
-			case "SIGIN":
+			case "SIGNIN":
 				pseudoClient = "server";
 				pseudoClientReceiver = "all";
-				message = socketClientStyleMessage.substring(6)+" signed in...";
-				//TODO implement sigin message to UI
+				message = socketClientStyleMessage.substring(7)+" signed in...";
 				break;
-			case "SIGOUT":
+			case "SIGNOUT":
 				pseudoClient = "server";
 				pseudoClientReceiver = "all";
-				message = socketClientStyleMessage.substring(7)+" signed out...";
-				//TODO implement sigout message to UI
+				message = socketClientStyleMessage.substring(8)+" signed out...";
 				break;
 		}
 	}
@@ -95,7 +92,7 @@ public class Message implements Serializable {
 	 */
 	public String toString() {
 		
-		return pseudoClient + " > " + pseudoClientReceiver + " on : " + date +
+		return pseudoClient + " > " + pseudoClientReceiver + /*" on : " + date +*/ //date disabled becose not transmitted to client
 		        " : \n" + message;
 	}
 

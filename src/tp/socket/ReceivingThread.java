@@ -25,6 +25,7 @@ public class ReceivingThread extends Thread {
     private LinkedList<ClientDescriptor> clientList;
     private String currantClientPseudo;
     private BufferedReader socIn = null;
+    private PrintStream socOut = null;
 
     ReceivingThread(Socket s, LinkedList<ClientDescriptor> refClientList, LinkedList<Message> aHistory) {
         this.clientSocket = s;
@@ -40,7 +41,7 @@ public class ReceivingThread extends Thread {
     public void run() {
         try {
             socIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
+            socOut = new PrintStream(clientSocket.getOutputStream());
             waitForConnection();
             clientList.add(new ClientDescriptor(currantClientPseudo,socOut) );
             String line;
@@ -143,6 +144,9 @@ public class ReceivingThread extends Thread {
                     cd.getStream().println(message.toSocketClient());
                 }
             }
+            if(!message.getPseudoClientReceiver().equals(currantClientPseudo)){
+                socOut.println(message.toSocketClient());
+            }
         }
     }
 
@@ -160,7 +164,6 @@ public class ReceivingThread extends Thread {
             cd.getStream().println("SIGNIN "+currantClientPseudo);
         }
         try{
-            PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
             //send the list of (other) client currently connected:
             for (ClientDescriptor cd:clientList) {
                 if(!cd.getPseudo().equals(currantClientPseudo)){
@@ -173,7 +176,19 @@ public class ReceivingThread extends Thread {
                 i=0;
             }
             for ( ; i<history.size() ; i++){
-                socOut.println(history.get(i).toSocketClient());
+                Message message = history.get(i);
+                //only send the message if destinated to currant user
+                if(message.getPseudoClientReceiver().equals("all") ||
+                        message.getPseudoClientReceiver().equals(currantClientPseudo) ||
+                        message.getIdClient().equals(currantClientPseudo)){
+                    socOut.println(message.toSocketClient());
+                }
+                else{
+                    i--;
+                    if (i<0){
+                        i=0;
+                    }
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
