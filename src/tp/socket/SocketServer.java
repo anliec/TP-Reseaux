@@ -10,12 +10,14 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 /**
- * Created by nicolas on 14/12/15.
+ * server designed to send and receive message to/from clients through socket connection
  */
-public class SocketServer {
+public class SocketServer extends Thread {
 
     private static final int DEFAULT_PORT = 4000;
 
@@ -24,25 +26,47 @@ public class SocketServer {
     private LinkedList<Message> history = new LinkedList<Message>();
     private String historyPath;
 
+    private boolean loop=true;
+
+    /**
+     * main constructor
+     * @param serverPort the port the server listen to
+     * @param historyPath where the server can found an history file (if the file don't exist a history file will
+     *                    be created when exiting)
+     * @throws IOException
+     */
     public SocketServer(int serverPort, String historyPath) throws IOException{
-        history = FileGesture.loadHistory(historyPath);
         this.historyPath = historyPath;
+        history = FileGesture.loadHistory(this.historyPath);
         listenSocket = new ServerSocket(serverPort); //port
+        listenSocket.setSoTimeout(100);
     }
 
+    /**
+     * thread main loop: handle the connection of new client by creating specific thread.
+     */
     public void run() {
         try {
-            while (true) {
-                Socket clientSocket = listenSocket.accept();
-                System.out.println("Connexion from: " + clientSocket.getInetAddress());
-                ReceivingThread ct = new ReceivingThread(clientSocket, clientList,history);
-                ct.start();
+            while (loop) {
+                try {
+                    Socket clientSocket = listenSocket.accept();
+                    ReceivingThread ct = new ReceivingThread(clientSocket, clientList, history);
+                    ct.start();
+                }catch (SocketTimeoutException e){
+                }
             }
         }
         catch (Exception e){
             System.err.println("Error in SocketServer: " + e);
         }
         FileGesture.saveHistory(historyPath,history);
+    }
+
+    /**
+     * end the thread infinite loop
+     */
+    public void close(){
+        loop=false;
     }
 
     public static void main(String args[]){
@@ -62,13 +86,20 @@ public class SocketServer {
             }
         }
 
-
         try {
             SocketServer server = new SocketServer(serverPort,"logs/histo.log");
             System.out.println("Server ready...");
-            server.run();
+            server.start();
+            Scanner scanner = new Scanner(System.in);
+            String command;
+            do{
+                command = scanner.nextLine();
+            }while (!command.equals("exit"));
+            server.close();
+            //server.stop();
         } catch (Exception e) {
             System.err.println("Error in SocketServer: " + e);
         }
+
     }
 }

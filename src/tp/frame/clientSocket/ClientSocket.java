@@ -9,15 +9,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Style;
 import javax.swing.text.StyledDocument;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
 
 /**
- * Created by nicolas on 30/12/15.
+ * window build around a socket client
  */
 public class ClientSocket extends JFrame{
     private JList lst_otherClient;
@@ -39,16 +36,21 @@ public class ClientSocket extends JFrame{
 
     private  javax.swing.Timer UpdateTimer;
 
-    /*public ClientSocket(){
-        client = new SocketClient("test","127.0.0.1",4000);
-        init();
-    }*/
-
+    /**
+     * main constructor
+     * @param clientPseudo pseudo of the currant client
+     * @param serverIP ip of the server to connect
+     * @param serverPort port of the server to connect
+     */
     public ClientSocket(String clientPseudo, String serverIP, int serverPort){
         client = new SocketClient(clientPseudo,serverIP,serverPort);
         init();
+
     }
 
+    /**
+     * initialisation procedure. extension of the constructor (comon part of different constructor)
+     */
     private void init(){
         //init config
         listOtherClient.add("all");
@@ -78,6 +80,16 @@ public class ClientSocket extends JFrame{
                 client.sendDisconnectionRequest();
             }
         });
+        tf_message.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if(e.getKeyChar() == '\n'){
+                    sendMessage();
+                    updateHistory();
+                }
+            }
+        });
         lst_otherClient.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -101,6 +113,9 @@ public class ClientSocket extends JFrame{
 
     ///=======================constructor end================================================
 
+    /**
+     * show up the client socket window as a main window
+     */
     public void display(){
         updateTitle();
         this.setContentPane(WindowPanel);
@@ -109,10 +124,16 @@ public class ClientSocket extends JFrame{
         this.setVisible(true);
     }
 
+    /**
+     * set the title of the window
+     */
     private void updateTitle(){
         this.setTitle("Chat - "+client.getUserName());
     }
 
+    /**
+     * update the history panel by showing all the received message corresponding to the UI state
+     */
     private void updateHistory(){
         LinkedList<Message> history = client.getHistory();
         updatedMessageView = new String();
@@ -142,12 +163,19 @@ public class ClientSocket extends JFrame{
         }
     }
 
+    /**
+     * force complete update of the history panel
+     */
     private void resetHistoryView(){
         lastHistoryIndex = -1; //reset to load full history
         tp_history.setText("");
         updateHistory();
     }
 
+    /**
+     * handel the work to be done for a message.
+     * @param message the message on witch the work will be done
+     */
     private void messageHandler(Message message){
         if (message.getIdClient() == null) {
             return;
@@ -168,6 +196,10 @@ public class ClientSocket extends JFrame{
         }
     }
 
+    /**
+     * add a client to the UI left panel
+     * @param clientName name of the client to add
+     */
     private void addOtherClient(String clientName){
         if(clientName.equals(client.getUserName())) {
             return;
@@ -180,10 +212,18 @@ public class ClientSocket extends JFrame{
         listOtherClient.add(clientName);
     }
 
+    /**
+     * remove a client to the UI left panel
+     * @param clientName name of the client to remove
+     */
     private void removeOtherClient(String clientName){
         listOtherClient.remove(clientName);
     }
 
+    /**
+     * display if necessary the given message on the history panel
+     * @param message message to display
+     */
     private void addMessageToDisplay(Message message){
         if(message.getIdClient().equals(selectedClient) ||
                 message.getPseudoClientReceiver().equals(selectedClient) ||
@@ -195,6 +235,9 @@ public class ClientSocket extends JFrame{
         }
     }
 
+    /**
+     * get the message from the UI and send it
+     */
     private void sendMessage(){
         if(tf_message.getText().length() > 0) {
             Message toSend = new Message(client.getUserName(),new Date(),tf_message.getText(),selectedClient);
@@ -202,13 +245,4 @@ public class ClientSocket extends JFrame{
             client.sendMessage(toSend);
         }
     }
-
-    /*public JPanel getContentPane(){
-        return WindowPanel;
-    }*/
-
-    /*public static void main(String[] args) {
-        ClientSocket frame = new ClientSocket("test","127.0.0.1",4000);
-        frame.display();
-    }*/
 }

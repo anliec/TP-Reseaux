@@ -30,8 +30,10 @@ public class ConnectionWindow extends JFrame {
 
     private ClientSocket socketFrame;
 
+    /**
+     * constructor: setup the UI (but don't display it)
+     */
     public ConnectionWindow() {
-
         //set server port text field to only allow IP address: (disable because force the user to use: 127.000.000.001)
         /*try{
             MaskFormatter mf = new MaskFormatter("###.###.###.###");
@@ -86,6 +88,9 @@ public class ConnectionWindow extends JFrame {
         });
     }
 
+    /**
+     * show up the connection window as a main window
+     */
     private void display(){
         this.setTitle("Connection Settings");
         this.setContentPane(connectionWindow);
@@ -94,10 +99,6 @@ public class ConnectionWindow extends JFrame {
         this.setSize(new Dimension(300,300));
         this.pack();
         this.setVisible(true);
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 
     public static void main(String[] args) {

@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 /**
- * Created by nicolas on 14/12/15.
+ * client designed to send and receive message to/from a server through socket connection
  */
 public class SocketClient {
 
@@ -26,19 +26,20 @@ public class SocketClient {
     private ClientThread readingThread;
     private String userName;
 
-    public SocketClient(String anUserName,String serverIP, int serverPort, boolean holdOn)
-    {
-        init(anUserName,serverIP,serverPort);
-        if(holdOn) {
-            run(holdOn);
-        }
-    }
-
+    /**
+     * main constructor
+     * @param anUserName pseudo of the currant client
+     * @param serverIP ip of the server to connect
+     * @param serverPort port of the server to connect
+     **/
     public SocketClient(String anUserName,String serverIP, int serverPort)
     {
         init(anUserName,serverIP,serverPort);
     }
 
+    /**
+     * initialisation procedure. extension of the constructor (comon part of different constructor)
+     */
     public void init(String anUserName,String serverIP, int serverPort){
         userName = anUserName;
         try {
@@ -63,6 +64,9 @@ public class SocketClient {
         run();
     }
 
+    /**
+     * begin the reception of message from the server
+     */
     public void run()
     {
         if(readingThread == null)
@@ -72,39 +76,32 @@ public class SocketClient {
         }
     }
 
-    public void run(boolean holdOn){
-        run();
-        if(holdOn){
-            while(readingThread.isAlive())
-            {
-                try{
-                    Thread.sleep(800);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-            try{
-                close();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /**
+     * send a message to the server
+     * @param message message to send
+     */
     public void sendMessage(Message message){
         socOut.println(message.toSocketServer());
     }
 
+    /**
+     * send a connection request to the server
+     */
     public void sendConnectionRequest() {
         socOut.println("CONNECT "+userName);
     }
 
+    /**
+     * send a disconnection request to the server
+     */
     public void sendDisconnectionRequest(){
         socOut.println("QUIT");
     }
 
+    /**
+     * do every things to do on exiting
+     * @throws IOException
+     */
     public void close() throws IOException
     {
         readingThread.close();
@@ -116,43 +113,15 @@ public class SocketClient {
     }
 
     /**
-     *  main method
-     *  accepts a connection, receives a message from client then sends an echo to the client
-     **/
-    public static void main(String[] args) throws IOException {
-        int serverPort = DEFAULT_PORT;
-        if (args.length > 2) {
-            System.out.println("Usage: java SocketClient <Serve IP> <Server port>");
-            System.exit(1);
-        }
-        else if (args.length == 1) {
-            System.out.println("Usage: java SocketClient <Serve IP> <Server port>");
-            System.out.println("Server port not found default one used: "+DEFAULT_PORT);
-            serverPort = DEFAULT_PORT;
-        }
-        else{
-            try{
-                serverPort = Integer.parseInt(args[1]);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        SocketClient client = new SocketClient("test",args[0], serverPort);
-
-        Message message = new Message("",new Date(),"message de test","all");
-
-        client.sendMessage(message);
-
-        client.run(true);
-
-        client.close();
-    }
-
+     * @return a reference of the client history
+     */
     public LinkedList<Message> getHistory(){
         return history;
     }
 
+    /**
+     * @return the name (or pseudo) of the currant user
+     */
     public String getUserName(){
         return userName;
     }

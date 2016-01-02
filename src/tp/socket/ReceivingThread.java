@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Date;
 
 /**
- * Created by nicolas on 14/12/15.
  * Server thread, design to handle the message send by one client
  */
 public class ReceivingThread extends Thread {
@@ -27,6 +26,13 @@ public class ReceivingThread extends Thread {
     private BufferedReader socIn = null;
     private PrintStream socOut = null;
 
+    /**
+     * main constructor
+     * @param s socket associated to the client
+     * @param refClientList a reference to the currently connected clients
+     * @param aHistory a reference to the history of the messages on this server (receved message will
+     *                 be added to it)
+     */
     ReceivingThread(Socket s, LinkedList<ClientDescriptor> refClientList, LinkedList<Message> aHistory) {
         this.clientSocket = s;
         this.clientList = refClientList;
