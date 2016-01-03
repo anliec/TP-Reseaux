@@ -78,6 +78,9 @@ public class ReceivingThread extends Thread {
      * @return the id of the instruction received
      */
     public int getInstructionType(String line){
+        if(line == null) {
+            return UNKNOWN_TYPE_MESSAGE;
+        }
         switch (line.charAt(0))
         {
             case 'C': //connection

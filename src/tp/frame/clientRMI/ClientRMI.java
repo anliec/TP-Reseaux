@@ -1,7 +1,7 @@
-package tp.frame.clientSocket;
+package tp.frame.clientRMI;
 
+import tp.client.ClientCore;
 import tp.protocol.Message;
-import tp.socket.SocketClient;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -13,9 +13,9 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * window build around a socket client
+ * window build around a RMI client
  */
-public class ClientSocket extends JFrame{
+public class ClientRMI extends JFrame{
     private JList lst_otherClient;
     private JButton sendButton;
     private JTextField tf_message;
@@ -26,7 +26,7 @@ public class ClientSocket extends JFrame{
     private Style defaultStyle;
     DefaultListModel listModel;
 
-    private SocketClient client;
+    private ClientCore client;
     private LinkedList<String> listOtherClient = new LinkedList<>();
     private String updatedMessageView;
     private String selectedClient;
@@ -39,12 +39,10 @@ public class ClientSocket extends JFrame{
      * main constructor
      * @param clientPseudo pseudo of the currant client
      * @param serverIP ip of the server to connect
-     * @param serverPort port of the server to connect
      */
-    public ClientSocket(String clientPseudo, String serverIP, int serverPort){
-        client = new SocketClient(clientPseudo,serverIP,serverPort);
+    public ClientRMI(String clientPseudo, String serverIP){
+        client = new ClientCore(clientPseudo,serverIP);
         init();
-
     }
 
     /**
@@ -76,7 +74,7 @@ public class ClientSocket extends JFrame{
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                client.sendDisconnectionRequest();
+                client.quit();
             }
         });
         tf_message.addKeyListener(new KeyAdapter() {
@@ -113,7 +111,7 @@ public class ClientSocket extends JFrame{
     ///=======================constructor end================================================
 
     /**
-     * show up the client socket window as a main window
+     * show up the client rmi window as a main window
      */
     public void display(){
         updateTitle();
@@ -128,7 +126,7 @@ public class ClientSocket extends JFrame{
      * set the title of the window
      */
     private void updateTitle(){
-        this.setTitle("Chat - "+client.getUserName());
+        this.setTitle("Chat - "+client.getPseudo());
     }
 
     /**
@@ -201,7 +199,7 @@ public class ClientSocket extends JFrame{
      * @param clientName name of the client to add
      */
     private void addOtherClient(String clientName){
-        if(clientName.equals(client.getUserName())) {
+        if(clientName.equals(client.getPseudo())) {
             return;
         }
         for (String oc:listOtherClient) {
@@ -240,9 +238,9 @@ public class ClientSocket extends JFrame{
      */
     private void sendMessage(){
         if(tf_message.getText().length() > 0) {
-            Message toSend = new Message(client.getUserName(),new Date(),tf_message.getText(),selectedClient);
+            Message toSend = new Message(client.getPseudo(),new Date(),tf_message.getText(),selectedClient);
             tf_message.setText("");
-            client.sendMessage(toSend);
+            client.send(toSend);
         }
     }
 }

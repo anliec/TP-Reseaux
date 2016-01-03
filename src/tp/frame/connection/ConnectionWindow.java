@@ -1,16 +1,12 @@
 package tp.frame.connection;
 
+import tp.frame.clientRMI.ClientRMI;
 import tp.frame.clientSocket.ClientSocket;
 
 import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.NumberFormat;
 
 /**
  * Created by nicolas on 29/12/15.
@@ -29,6 +25,7 @@ public class ConnectionWindow extends JFrame {
 
 
     private ClientSocket socketFrame;
+    private ClientRMI rmiFrame;
 
     /**
      * constructor: setup the UI (but don't display it)
@@ -56,6 +53,11 @@ public class ConnectionWindow extends JFrame {
                 if(Rb_Socket.isSelected()){
                     socketFrame = new ClientSocket(tf_pseudo.getText(),FTF_IP.getText(),(Integer)sp_Port.getValue());
                     socketFrame.display();
+                    setVisible(false);
+                }
+                else if(Rb_RMI.isSelected()){
+                    rmiFrame = new ClientRMI(tf_pseudo.getText(),FTF_IP.getText());
+                    rmiFrame.display();
                     setVisible(false);
                 }
             }

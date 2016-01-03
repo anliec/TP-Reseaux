@@ -65,7 +65,7 @@ public class Client {
 
 			Reception reception = new Reception(this);
 			receptionStub = (ReceptionItf) UnicastRemoteObject.exportObject(reception, 0);
-			requestStub.login(receptionStub);
+			requestStub.login(receptionStub,pseudo);
 			System.out.println("connecte, \n affichage des 10 derniers messages :");
 			{
 				Message[] last = lastN(10);
@@ -110,7 +110,7 @@ public class Client {
 
 						// quand le client quitte le chat, il est retire de la
 						// liste du server
-						requestStub.logout(receptionStub);
+						requestStub.logout(receptionStub,pseudo);
 						on = false;
 						break;
 
@@ -153,7 +153,6 @@ public class Client {
 	 */
 
 	private Message createMessage(String text) {
-
 		return new Message(pseudo, new Date(), text);
 	}
 
@@ -161,16 +160,22 @@ public class Client {
 	 * le client dont on appelle cette methode envoie un message donne en
 	 * paramtre sous forme d'une String vers le serveur auquel il est connecte
 	 * 
-	 * @param string
-	 *            le message
+	 * @param string le message
 	 */
+	public void send(String string){
+		send(createMessage(string));
+	}
 
-	public void send(String string) {
-
+	/**
+	 * le client dont on appelle cette methode envoie un message donne en
+	 * paramtre sous forme d'une String vers le serveur auquel il est connecte
+	 *
+	 * @param message le message
+	 */
+	public void send(Message message) {
 		try {
-			requestStub.send(createMessage(string));
+			requestStub.send(message);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -187,10 +192,9 @@ public class Client {
 		
 		try {
 			
-			last = requestStub.lastN(n);
+			last = requestStub.lastN(n,pseudo);
 		
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

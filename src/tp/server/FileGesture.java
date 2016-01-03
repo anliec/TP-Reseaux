@@ -99,7 +99,6 @@ public abstract class FileGesture {
 		} catch (FileNotFoundException e) {
 			System.out.println("log file: "+file+" didn't exist");
 			e.printStackTrace();
-			System.out.println(file+" created");
 		} catch (IOException e) {
 			
 			e.printStackTrace();

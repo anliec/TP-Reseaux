@@ -7,10 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Scanner;
+import java.util.*;
 
 import tp.protocol.Message;
 import tp.protocol.ReceptionItf;
@@ -26,7 +23,7 @@ public class Server {
 	private final static String HISTO_FILE_NAME = "logs\\histo.log";
 	
 	private LinkedList<Message> history; // plus optimise en ajout/suppression
-	private ArrayList<ReceptionItf> receptionClients; // plus optimise en acces
+	private ArrayList<RmiClientDescriptor> receptionClients; // plus optimise en acces
 	private RequestItf requestStub;
 	private Registry registry;
 	
@@ -37,7 +34,7 @@ public class Server {
 	public Server() {
 		
 		history = FileGesture.loadHistory(HISTO_FILE_NAME);
-		receptionClients = new ArrayList<ReceptionItf>();
+		receptionClients = new ArrayList<RmiClientDescriptor>();
 		
 		try {
 			registry = LocateRegistry.createRegistry(1099); // lance le registre
@@ -98,24 +95,53 @@ public class Server {
 	 *            the message
 	 */
 	public void addMessage(Message aMessage) {
-		
 		history.add(aMessage);
+		sendMessage(aMessage);
 		System.out.println(aMessage);
+	}
+
+	public void sendMessage(Message message){
+		if(message.getPseudoClientReceiver().equals("all"))
+		{
+			sendMessageToAll(message);
+		}
+		else {
+			//send message to the good client and back to the sender
+			for (RmiClientDescriptor rc:receptionClients){
+				if(rc.getPseudo().equals(message.getPseudoClientReceiver()) ||
+						rc.getPseudo().equals(message.getIdClient())){
+					try{
+						rc.getReception().receive(message);
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Method which resends the message to all the clients
+	 *
+	 * @param message
+	 *            the message
+	 */
+	public void sendMessageToAll(Message message){
 		for (int i = 0; i < receptionClients.size(); i++) {
-			
+
 			try {
-				
-				receptionClients.get(i).receive(aMessage);
-				
+
+				receptionClients.get(i).getReception().receive(message);
+
 			} catch (Exception e) {
-				
+
 				System.err.println("Server exception : Client : "
-				        + receptionClients.get(i) + " not found ");
-				removeClient(receptionClients.get(i));
+						+ receptionClients.get(i) + " not found ");
+				removeClient(receptionClients.get(i).getReception(),receptionClients.get(i).getPseudo());
 				System.err.println("Server exception: " + e);
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 	
@@ -127,16 +153,27 @@ public class Server {
 	 * @return 1 if the client has been correctly added, else 0, such as when
 	 *         the interface already exists
 	 */
-	public int addClient(ReceptionItf pseudo) {
+	public int addClient(ReceptionItf pseudo, String clientPseudo) {
 		
-		ListIterator<ReceptionItf> li = receptionClients.listIterator();
-		while (li.hasNext() && !li.next().equals(pseudo))
+		ListIterator<RmiClientDescriptor> li = receptionClients.listIterator();
+		while (li.hasNext() && !li.next().getReception().equals(pseudo))
 			;
 		
 		if (!li.hasNext()) {
-			
-			receptionClients.add(pseudo);
-			System.out.println("Client : " + pseudo + " added");
+			//send a message to every one
+			sendMessageToAll(new Message("SIGNIN "+clientPseudo));
+			//send to new user the list of currantly connected user:
+			try{
+				for(RmiClientDescriptor rc:receptionClients){
+					pseudo.receive(new Message("SIGNIN "+rc.getPseudo()));
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			//add the client
+			receptionClients.add(new RmiClientDescriptor(pseudo,clientPseudo));
+			System.out.println("Client : " + clientPseudo + " added");
+
 			return 1;
 			
 		} else {
@@ -144,6 +181,7 @@ public class Server {
 			System.err.println("Client : " + pseudo + " already exists");
 			return 0;
 		}
+
 	}
 	
 	/**
@@ -155,22 +193,23 @@ public class Server {
 	 * @return 1 if the client was well connected to the server and has been
 	 *         well disconnected, else 0.
 	 */
-	public int removeClient(ReceptionItf receptionItf) {
+	public int removeClient(ReceptionItf receptionItf, String clientPseudo) {
 		
-		ListIterator<ReceptionItf> li = receptionClients.listIterator();
-		while (li.hasNext() && !li.next().equals(receptionItf))
+		ListIterator<RmiClientDescriptor> li = receptionClients.listIterator();
+		while (li.hasNext() && !li.next().getReception().equals(receptionItf))
 			;
 		
 		int code = 0;
 		try {
-			
+			//send a message to every one
+			sendMessageToAll(new Message("SIGNOUT "+clientPseudo));
 			li.remove();
-			System.out.println("Client : " + receptionItf + " removed");
+			System.out.println("Client : " + clientPseudo + " removed");
 			code = 1;
 			
 		} catch (Exception e) {
 			
-			System.err.println("Client : " + receptionItf + " not in server");
+			System.err.println("Client : " + clientPseudo + " not in server");
 			System.err.println("Server exception: " + e);
 			e.printStackTrace();
 			
@@ -189,10 +228,21 @@ public class Server {
 	 * @return the table of the n last messages
 	 */
 	
-	public Message[] lastN(int n) {
-		
-		int last = Math.max(history.size(), 0);
-		return history.subList(Math.max(last - n, 0), last).toArray(
+	public Message[] lastN(int n,String clientName) {
+		LinkedList<Message> messagesToSend = new LinkedList<>();
+		int a=n; //number of message to send
+		for(int i=history.size()-1 ; i>0 && i>history.size()-a-1 ; i--) {
+			Message message = history.get(i);
+			if(message.getPseudoClientReceiver().equals("all") ||
+					message.getPseudoClientReceiver().equals(clientName) ||
+					message.getIdClient().equals(clientName)){
+				messagesToSend.add(message);
+			}
+			else {
+				a++; //no message added must look deeper
+			}
+		}
+		return messagesToSend.toArray(
 		        new Message[n]);
 	}
 }

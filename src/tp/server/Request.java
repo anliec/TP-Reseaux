@@ -40,18 +40,18 @@ public class Request implements RequestItf {
 	 * (non-Javadoc)
 	 * @see tp.protocol.RequestItf#login(tp.protocol.ReceptionItf)
 	 */
-	public int login(ReceptionItf pseudo) throws RemoteException {
+	public int login(ReceptionItf pseudo, String clientName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return server.addClient(pseudo);
+		return server.addClient(pseudo, clientName);
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see tp.protocol.RequestItf#logout(long)
 	 */
-	public int logout(ReceptionItf pseudo) throws RemoteException {
+	public int logout(ReceptionItf pseudo, String clientName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return server.removeClient(pseudo);
+		return server.removeClient(pseudo, clientName);
 	}
 	
 	/*
@@ -59,9 +59,9 @@ public class Request implements RequestItf {
 	 * @see tp.protocol.RequestItf#lastN(int)
 	 */
 	@Override
-	public Message[] lastN(int n) throws RemoteException {
+	public Message[] lastN(int n, String clientName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return server.lastN(n);
+		return server.lastN(n,clientName);
 	}
 	
 }
