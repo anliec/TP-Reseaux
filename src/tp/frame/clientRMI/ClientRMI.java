@@ -40,7 +40,7 @@ public class ClientRMI extends JFrame{
      * @param clientPseudo pseudo of the currant client
      * @param serverIP ip of the server to connect
      */
-    public ClientRMI(String clientPseudo, String serverIP){
+    public ClientRMI(String clientPseudo, String serverIP) throws Exception{
         client = new ClientCore(clientPseudo,serverIP);
         init();
     }

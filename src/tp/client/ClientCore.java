@@ -29,9 +29,9 @@ public class ClientCore {
     private LinkedList<Message> history = new LinkedList<>();
 
 
-    public ClientCore(String clientPseudo, String hostIp) {
+    public ClientCore(String clientPseudo, String hostIp) throws Exception {
         pseudo = clientPseudo;
-        try {
+        //try {
             registry = LocateRegistry.getRegistry(hostIp);
             // connection a l'interface serveur
             requestStub = (RequestItf) registry.lookup("Request1");
@@ -49,10 +49,10 @@ public class ClientCore {
                     break;
             }
 
-        } catch (Exception e) {
+        /*} catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
-        }
+        }*/
 
     }
 

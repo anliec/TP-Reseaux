@@ -32,17 +32,16 @@ public class SocketClient {
      * @param serverIP ip of the server to connect
      * @param serverPort port of the server to connect
      **/
-    public SocketClient(String anUserName,String serverIP, int serverPort)
-    {
+    public SocketClient(String anUserName,String serverIP, int serverPort) throws Exception {
         init(anUserName,serverIP,serverPort);
     }
 
     /**
      * initialisation procedure. extension of the constructor (comon part of different constructor)
      */
-    public void init(String anUserName,String serverIP, int serverPort){
+    public void init(String anUserName,String serverIP, int serverPort) throws Exception {
         userName = anUserName;
-        try {
+        //try {
             // creation socket ==> connexion
             echoSocket = new Socket(serverIP,serverPort);
             socIn = new BufferedReader(
@@ -50,7 +49,7 @@ public class SocketClient {
             socOut= new PrintStream(echoSocket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
             sendConnectionRequest();
-        } catch (UnknownHostException e) {
+        /*} catch (UnknownHostException e) {
             System.err.println("Don't know about host: " + serverIP);
             e.printStackTrace();
             System.exit(1);
@@ -60,7 +59,7 @@ public class SocketClient {
             e.printStackTrace();
             System.exit(1);
         }
-        System.out.println("Connected to server: "+serverIP+" on port: "+serverPort);
+        System.out.println("Connected to server: "+serverIP+" on port: "+serverPort);*/
         run();
     }
 

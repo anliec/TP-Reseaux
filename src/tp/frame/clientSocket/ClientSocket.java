@@ -41,10 +41,9 @@ public class ClientSocket extends JFrame{
      * @param serverIP ip of the server to connect
      * @param serverPort port of the server to connect
      */
-    public ClientSocket(String clientPseudo, String serverIP, int serverPort){
+    public ClientSocket(String clientPseudo, String serverIP, int serverPort) throws Exception{
         client = new SocketClient(clientPseudo,serverIP,serverPort);
         init();
-
     }
 
     /**

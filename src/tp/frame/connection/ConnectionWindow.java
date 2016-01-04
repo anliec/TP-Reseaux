@@ -51,14 +51,28 @@ public class ConnectionWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if(Rb_Socket.isSelected()){
-                    socketFrame = new ClientSocket(tf_pseudo.getText(),FTF_IP.getText(),(Integer)sp_Port.getValue());
-                    socketFrame.display();
-                    setVisible(false);
+                    try{
+                        socketFrame = new ClientSocket(tf_pseudo.getText(),FTF_IP.getText(),(Integer)sp_Port.getValue());
+                        socketFrame.display();
+                        setVisible(false);
+                    }catch (Exception e){
+                        JOptionPane.showMessageDialog(socketFrame,
+                                e.getMessage(),
+                                "Server error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 else if(Rb_RMI.isSelected()){
-                    rmiFrame = new ClientRMI(tf_pseudo.getText(),FTF_IP.getText());
-                    rmiFrame.display();
-                    setVisible(false);
+                    try{
+                        rmiFrame = new ClientRMI(tf_pseudo.getText(),FTF_IP.getText());
+                        rmiFrame.display();
+                        setVisible(false);
+                    }catch (Exception e){
+                        JOptionPane.showMessageDialog(rmiFrame,
+                                e.getMessage(),
+                                "Server error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
