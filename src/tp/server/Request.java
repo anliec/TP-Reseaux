@@ -19,7 +19,9 @@ public class Request implements RequestItf {
 	
 	/**
 	 * Default Server Interface Constructor
-	 * @param server the server which instantiates this interface
+	 * 
+	 * @param server
+	 *            the server which instantiates this interface
 	 */
 	
 	public Request(Server server) {
@@ -61,7 +63,7 @@ public class Request implements RequestItf {
 	@Override
 	public Message[] lastN(int n, String clientName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return server.lastN(n,clientName);
+		return server.lastN(n, clientName);
 	}
 	
 }

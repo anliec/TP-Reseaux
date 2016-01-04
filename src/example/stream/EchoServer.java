@@ -5,7 +5,7 @@
  * Authors:
  */
 
-package tp.stream;
+package example.stream;
 
 import java.io.*;
 import java.net.*;

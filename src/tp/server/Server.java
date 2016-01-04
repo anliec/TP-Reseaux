@@ -228,7 +228,7 @@ public class Server {
 	 * @return the table of the n last messages
 	 */
 	
-	public Message[] lastN(int n,String clientName) {
+	public Message[] lastN(int n, String clientName) {
 		LinkedList<Message> messagesToSend = new LinkedList<>();
 		int a=n; //number of message to send
 		for(int i=history.size()-1 ; i>0 && i>history.size()-a-1 ; i--) {
@@ -245,4 +245,12 @@ public class Server {
 		return messagesToSend.toArray(
 		        new Message[n]);
 	}
+	
+	/**
+	 * Method which returns the last n messages of the conversation carried by
+	 * the server
+	 * 
+	 * @param n
+	 * @return the table of the n last messages
+	 */
 }
