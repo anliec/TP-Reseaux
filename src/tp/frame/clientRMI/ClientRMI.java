@@ -116,7 +116,7 @@ public class ClientRMI extends JFrame{
     public void display(){
         updateTitle();
         this.setContentPane(WindowPanel);
-        this.setMinimumSize(new Dimension(300,400));
+        this.setMinimumSize(new Dimension(200,200));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         this.setVisible(true);

@@ -69,12 +69,11 @@ public class Server {
 		Scanner sc = new Scanner(System.in);
 		String cmd = "";
 		
-		while (cmd != "c") {
+		while (!cmd.equals("c")) {
 			cmd = sc.nextLine();
 		}
 		sc.close();
 		close();
-		System.out.println("yo");
 		System.exit(0);
 	}
 	
@@ -83,7 +82,6 @@ public class Server {
 	 * messages' list sent to the server) in the file histo.log
 	 */
 	public void close() {
-		
 		FileGesture.saveHistory(HISTO_FILE_NAME, history);
 	}
 	
@@ -100,7 +98,7 @@ public class Server {
 		System.out.println(aMessage);
 	}
 
-	public void sendMessage(Message message){
+	private void sendMessage(Message message){
 		if(message.getPseudoClientReceiver().equals("all"))
 		{
 			sendMessageToAll(message);
@@ -126,7 +124,7 @@ public class Server {
 	 * @param message
 	 *            the message
 	 */
-	public void sendMessageToAll(Message message){
+	private void sendMessageToAll(Message message){
 		for (int i = 0; i < receptionClients.size(); i++) {
 
 			try {

@@ -7,16 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.LinkedList;
 
 /**
  * client designed to send and receive message to/from a server through socket connection
  */
 public class SocketClient {
-
-    private static final int DEFAULT_PORT = 4000;
 
     private Socket echoSocket = null;
     private PrintStream socOut = null;
@@ -39,35 +35,21 @@ public class SocketClient {
     /**
      * initialisation procedure. extension of the constructor (comon part of different constructor)
      */
-    public void init(String anUserName,String serverIP, int serverPort) throws Exception {
+    private void init(String anUserName,String serverIP, int serverPort) throws Exception {
         userName = anUserName;
-        //try {
-            // creation socket ==> connexion
-            echoSocket = new Socket(serverIP,serverPort);
-            socIn = new BufferedReader(
-                    new InputStreamReader(echoSocket.getInputStream()));
-            socOut= new PrintStream(echoSocket.getOutputStream());
-            stdIn = new BufferedReader(new InputStreamReader(System.in));
-            sendConnectionRequest();
-        /*} catch (UnknownHostException e) {
-            System.err.println("Don't know about host: " + serverIP);
-            e.printStackTrace();
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("Couldn't get I/O for "
-                    + "the connection to:"+ serverIP);
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.out.println("Connected to server: "+serverIP+" on port: "+serverPort);*/
+
+        echoSocket = new Socket(serverIP,serverPort);
+        socIn = new BufferedReader( new InputStreamReader(echoSocket.getInputStream()));
+        socOut= new PrintStream(echoSocket.getOutputStream());
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
+        sendConnectionRequest();
         run();
     }
 
     /**
      * begin the reception of message from the server
      */
-    public void run()
-    {
+    public void run() {
         if(readingThread == null)
         {
             readingThread = new ClientThread(history,socIn);
