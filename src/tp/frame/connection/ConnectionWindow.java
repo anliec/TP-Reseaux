@@ -12,7 +12,11 @@ import java.awt.event.ActionListener;
  * Created by nicolas on 29/12/15.
  */
 public class ConnectionWindow extends JFrame {
-    private JButton connectButton;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 105L;
+	private JButton connectButton;
     private JButton quitButton;
     private JRadioButton Rb_RMI;
     private JRadioButton Rb_Socket;
