@@ -36,7 +36,7 @@ public class ClientThread extends Thread {
         while (loop) {
             try{
                 line= socIn.readLine();
-                if(line.equals(".")) {
+                if(line.substring(0,25).equals("DISCONNECTED BY SERVER: ")) {
                     loop = false;
                 }
                 else {
